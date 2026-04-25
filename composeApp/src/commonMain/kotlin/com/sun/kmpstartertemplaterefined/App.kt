@@ -1,0 +1,152 @@
+/*
+ *
+ *  *
+ *  *  * Copyright (c) 2026
+ *  *  *
+ *  *  * Author: Athar Gul
+ *  *  * GitHub: https://github.com/DevAtrii/Kmp-Starter-Template
+ *  *  * YouTube: https://www.youtube.com/@devatrii/videos
+ *  *  *
+ *  *  * All rights reserved.
+ *  *
+ *  *
+ *
+ */
+
+package com.sun.kmpstartertemplaterefined
+
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult.ActionPerformed
+import androidx.compose.material3.SnackbarResult.Dismissed
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
+import com.sun.kmpstartertemplaterefined.core.KmpAppInitializer
+import com.sun.kmpstartertemplaterefined.core.datastore.theme.ThemeDataStore
+import com.sun.kmpstartertemplaterefined.core.events.controllers.SnackbarController
+import com.sun.kmpstartertemplaterefined.feature_navigation.StarterNavigation
+import com.sun.kmpstartertemplaterefined.feature_navigation.screens.StarterScreens
+import com.sun.kmpstartertemplaterefined.feature_resources.locale.LocaleProvider
+import com.sun.kmpstartertemplaterefined.feature_resources.locale.StarterLocales
+import com.sun.kmpstartertemplaterefined.theme.ApplicationTheme
+import com.sun.kmpstartertemplaterefined.ui_utils.composition_locals.LocalThemeMode
+import com.sun.kmpstartertemplaterefined.ui_utils.side_effects.LaunchOnce
+import com.sun.kmpstartertemplaterefined.ui_utils.side_effects.ObserveAsEvents
+import com.sun.kmpstartertemplaterefined.ui_utils.store.AppUpdateProvider
+import com.sun.kmpstartertemplaterefined.utils.starter.ExperimentalStarterApi
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import org.koin.compose.koinInject
+
+/**
+ * The main entry point of the application UI.
+ */
+@Composable
+fun App() {
+    val appInitializer: KmpAppInitializer = koinInject()
+    LaunchOnce {
+        appInitializer.initialize()
+    }
+
+    val snackbarHostState = remember {
+        SnackbarHostState()
+    }
+
+    GlobalSideEffects(snackbarHostState = snackbarHostState)
+    MainApp(snackbarHostState = snackbarHostState)
+}
+
+/**
+ * The core UI layout.
+ * Configures the App Update logic, Localization, Theme preferences,
+ * and hosts the main Navigation graph.
+ */
+@OptIn(ExperimentalStarterApi::class)
+@Composable
+private fun MainApp(
+    snackbarHostState: SnackbarHostState,
+    themeDataStore: ThemeDataStore = koinInject(),
+) {
+    val currentThemeMode by themeDataStore.themeMode.collectAsState(
+        initial = ThemeDataStore.DEFAULT_THEME_MODE
+    )
+    val currentDynamicColor by themeDataStore.dynamicColor.collectAsState(
+        initial = ThemeDataStore.DEFAULT_DYNAMIC_COLOR_SCHEME
+    )
+
+    AppUpdateProvider(
+        force = true
+    ) {
+        LocaleProvider(
+            overrideDefault = StarterLocales.ENGLISH
+        ) {
+            CompositionLocalProvider(LocalThemeMode provides currentThemeMode) {
+                ApplicationTheme(
+                    darkTheme = currentThemeMode.isInDarkTheme(isSystemInDarkTheme()),
+                    dynamicColor = currentDynamicColor
+                ) {
+                    Scaffold(
+                        snackbarHost = {
+                            SnackbarHost(
+                                hostState = snackbarHostState
+                            )
+                        }
+                    ) { _: PaddingValues ->
+                        StarterNavigation(
+                            StarterScreens.Splash,
+                            modifier = Modifier
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Handles non-UI logic triggered by events.
+ * Listens for global snackbar requests and manages their display and dismissal.
+ */
+@Composable
+private fun GlobalSideEffects(
+    snackbarHostState: SnackbarHostState,
+    scope: CoroutineScope = rememberCoroutineScope(),
+) {
+
+    ObserveAsEvents(
+        flow = SnackbarController.events,
+    ) { snackbarEvent ->
+        // launching another scope inside launched effect for ui of snackbar
+        scope.launch {
+            if (snackbarEvent.dismissPrevious && snackbarHostState.currentSnackbarData != null) {
+                snackbarHostState.currentSnackbarData?.dismiss()
+                delay(100)
+            }
+
+            if (snackbarEvent.message.isEmpty())
+                return@launch
+
+            val result = snackbarHostState.showSnackbar(
+                message = snackbarEvent.message,
+                actionLabel = snackbarEvent.action?.name,
+                duration = SnackbarDuration.Short
+            )
+            when (result) {
+                Dismissed -> Unit
+                ActionPerformed -> {
+                    snackbarEvent.action?.action?.invoke()
+                }
+            }
+        }
+    }
+}
