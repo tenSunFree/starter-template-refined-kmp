@@ -1,4 +1,4 @@
-# kmp-starter-template-refined
+# starter-template-refined-kmp
 
 ![KMP CI](https://github.com/tenSunFree/KmpStarterTemplateRefined/actions/workflows/ci.yml/badge.svg)
 
