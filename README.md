@@ -13,6 +13,20 @@ https://github.com/DevAtrii/Kmp-Starter-Template
 
 This project is for learning and technical practice.
 
+It can also be paired with my Go backend boilerplate to demonstrate a full-stack mobile application architecture.
+
+---
+
+## Related Backend
+
+This project can be used together with my Go backend boilerplate:
+
+- [rest-boilerplate-refined-go](https://github.com/tenSunFree/rest-boilerplate-refined-go)
+
+The backend project provides a RESTful API foundation built with Go, Gin, PostgreSQL, sqlx, Redis, JWT, Docker, and Clean Architecture.
+
+It can serve as the server-side foundation for authentication, user management, API development, and backend infrastructure practice.
+
 ---
 
 ## Preview
