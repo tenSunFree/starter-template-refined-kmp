@@ -39,11 +39,15 @@ It can serve as the server-side foundation for authentication, user management, 
   <img src="https://i.postimg.cc/5y0ZFcN1/Screenshot-20260503-223243.png" width="160"/>
 </p> 
 <p align="left">
-  <img src="https://i.postimg.cc/jjQVP3Zr/1.png" width="160"/>
-  <img src="https://i.postimg.cc/W46RgYX0/2.png" width="160"/>
-  <img src="https://i.postimg.cc/4dJD5vS5/3.png" width="160"/>
-  <img src="https://i.postimg.cc/50xh35Rm/4.png" width="160"/>
-  <img src="https://i.postimg.cc/SsyBrLvT/7.png" width="160"/>
+  <img src="https://i.postimg.cc/xdzn1Qqm/Screenshot-20260522-011118.png" width="160"/>
+  <img src="https://i.postimg.cc/6QvtpKTG/Screenshot-20260522-011125.png" width="160"/>
+  <img src="https://i.postimg.cc/JhkMz8tZ/Screenshot-20260522-011129.png" width="160"/>
+  <img src="https://i.postimg.cc/tgxp4b7F/Screenshot-20260522-011138.png" width="160"/>
+  <img src="https://i.postimg.cc/nLDphxMv/Screenshot-20260522-011142.png" width="160"/>
+</p> 
+<p align="left">
+  <img src="https://i.postimg.cc/bvtpwPdx/Screenshot-20260522-011228.png" width="160"/>
+  <img src="https://i.postimg.cc/P5cdHJfz/Screenshot-20260522-011306.png" width="160"/>
 </p> 
 
 ---
@@ -54,6 +58,16 @@ It can serve as the server-side foundation for authentication, user management, 
 
 - Android: Secure session storage using DataStore + Tink AEAD AES256-GCM backed by Android Keystore
 - iOS: Secure credential storage using Keychain (`kSecClassGenericPassword`) with `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`
+
+### Lesson Player
+
+- YouTube video playback via `android-youtube-player:core:13.0.0`
+- Custom playback controls (play / pause / seek) with YouTube native controls hidden
+- Time-synced bilingual captions (English + Traditional Chinese) driven by API response (`startMs` / `endMs`)
+- Auto-scroll caption list to highlight the current caption in real time
+- Vocabulary teaching items linked to specific caption timestamps
+- Playback progress timer managed by ViewModel with periodic progress updates
+- Seek-only sync to YouTube player via `seekToMs`, preventing frame drops caused by continuous seek calls
 
 ---
 
@@ -71,6 +85,8 @@ It can serve as the server-side foundation for authentication, user management, 
   Programmatic Gradle module standardization (Implements reusable Plugin<Project> convention plugins such as CommonPlugin, ComposeMultiplatformPlugin, KoinPlugin, and KoinComposePlugin to apply shared plugins, dependencies, and Compose/Koin configuration consistently across feature modules)
 - Secure Storage  
   Cross-platform credential protection with platform-native security backends (Android encrypts session data with Tink AEAD AES256-GCM backed by Android Keystore; iOS persists credentials in the system Keychain using `kSecClassGenericPassword` with `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`)
+- android-youtube-player Integration  
+  Native Android YouTube embedding via `YouTubePlayerView` inside Compose using `android-youtube-player:core:13.0.0`. Uses `IFramePlayerOptions` to hide native controls, blocks direct interaction on the video surface with a transparent overlay, and synchronizes play / pause / seek commands from Compose state.
 
 ---
 
@@ -93,11 +109,19 @@ If there is any infringement, please contact me for removal. Thank you.
 
 ---
 
-## License
+## License & Disclaimer
 
-This repository is intended for learning and demonstration.
+This repository is intended for learning, demonstration, and portfolio purposes.
 
-If you plan to open-source it, please choose a license and confirm third-party asset usage rights.
+Unless otherwise specified, the source code in this repository is either authored by the repository owner, adapted from properly licensed open-source templates, or built upon third-party open-source libraries according to their respective license terms.
+
+If a `LICENSE` file is included in this repository, the source code is licensed under the terms specified in that file. If no `LICENSE` file is provided, all rights are reserved by default — please contact the repository owner before reusing, modifying, or distributing any code.
+
+Any third-party assets, APIs, fonts, icons, images, videos, audio files, trademarks, product names, company names, open-source templates, libraries, or other materials used in this project belong to their respective owners and are subject to their original licenses, terms, and usage restrictions.
+
+This project may follow common product patterns, UI patterns, or implementation approaches for educational and demonstrative purposes. It is not intended to replicate, replace, or compete with any commercial product. This repository is not affiliated with, endorsed by, or sponsored by any third-party company, product, service, or brand, unless explicitly stated.
+
+If you have any concerns regarding copyright, trademark, license compliance, or third-party material usage, please open an issue or contact the repository owner — relevant content will be reviewed and addressed promptly.
 
 ---
 
